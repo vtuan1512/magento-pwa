@@ -5,6 +5,8 @@ import { GET_PRODUCTS_REVIEWS } from "./review.gql.js";
 import { fullPageLoadingIndicator } from "@magento/venia-ui/lib/components/LoadingIndicator";
 import ErrorView from "@magento/venia-ui/lib/components/ErrorView";
 import { useStyle } from "@magento/venia-ui/lib/classify";
+import { useHistory } from 'react-router-dom';
+
 
 const Reviews = props => {
     const productSku = props.productDetails.sku;
@@ -14,6 +16,7 @@ const Reviews = props => {
         nextFetchPolicy: 'cache-first'
     });
     const classes = useStyle(props.classes);
+    const history = useHistory(); // Initialize useHistory
 
     if (!data) {
         if (loading) {
@@ -26,9 +29,9 @@ const Reviews = props => {
 
     const Getreviews = data.products.items[0].reviews.items;
 
-    const relatedItems = Getreviews.map((item) => {
+    const relatedItems = Getreviews.map((item, index) => {
         return (
-            <div className={classes.reviewContainer} style={{ padding: "20px"}}>
+            <div key={index} className={classes.reviewContainer} style={{ padding: "20px"}}>
                 <h3 style={{ margin: 0 , color: 'red', fontWeight: "bold"}}>{item.nickname}</h3>
                 <h4 style={{ margin: "5px 0", fontWeight: "bold" }}>{item.summary}</h4>
                 <p style={{ margin: "5px 0" }}>{item.text}</p>
@@ -36,6 +39,9 @@ const Reviews = props => {
             </div>
         );
     });
+    const handleButtonClick = () => {
+        history.push('/target-route');
+    };
 
     return (
         <div>
@@ -46,6 +52,9 @@ const Reviews = props => {
                 />
             </h2>
             <div>{relatedItems}</div>
+            <button onClick={handleButtonClick} style={{ marginTop: '20px', padding: '10px 20px', fontSize: '1em', cursor: 'pointer' }}>
+                Go to Another Page
+            </button>
         </div>
     );
 };
